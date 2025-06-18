@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comparador de Servicios en la Nube</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .filters {
+      background-color: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .filter-group {
+      margin-bottom: 15px;
+    }
+    .filter-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .filter-option {
+      margin-right: 15px;
+      cursor: pointer;
+    }
+    .filter-option:hover {
+      text-decoration: underline;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #4472C4;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .aws {
+      background-color: #FF9900;
+      color: #232F3E;
+      padding: 3px 6px;
+      border-radius: 3px;
+    }
+    .azure {
+      background-color: #0078D4;
+      color: white;
+      padding: 3px 6px;
+      border-radius: 3px;
+    }
+    .gcp {
+      background-color: #4285F4;
+      color: white;
+      padding: 3px 6px;
+      border-radius: 3px;
+    }
+    .table-container {
+      max-height: 600px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    .service-info {
+      display: block;
+      font-size: 0.85em;
+      color: #555;
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+    .toggle-all {
+      margin-left: 15px;
+      color: #4472C4;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .toggle-all:hover {
+      text-decoration: underline;
+    }
+    .service-name {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .provider-logo {
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+    .service-cell {
+      min-width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Comparador de Servicios en la Nube</h1>
+  
+  <div class="filters">
+    <h2>Filtros</h2>
+    
+    <div class="filter-group">
+      <div class="filter-title">
+        Proveedores de Nube:
+        <span class="toggle-all" id="toggle-providers">Seleccionar/Deseleccionar todos</span>
+      </div>
+      <div class="filter-options">
+        <label class="filter-option"><input type="checkbox" class="provider" value="aws" checked> AWS</label>
+        <label class="filter-option"><input type="checkbox" class="provider" value="azure" checked> Azure</label>
+        <label class="filter-option"><input type="checkbox" class="provider" value="gcp" checked> Google Cloud</label>
+      </div>
+    </div>
+    
+    <div class="filter-group">
+      <div class="filter-title">
+        Categorías de Servicios:
+        <span class="toggle-all" id="toggle-categories">Seleccionar/Deseleccionar todos</span>
+      </div>
+      <div class="filter-options">
+        <label class="filter-option"><input type="checkbox" class="category" value="compute" checked> Cómputo</label>
+        <label class="filter-option"><input type="checkbox" class="category" value="storage" checked> Almacenamiento</label>
+        <label class="filter-option"><input type="checkbox" class="category" value="database" checked> Bases de Datos</label>
+        <label class="filter-option"><input type="checkbox" class="category" value="network" checked> Redes</label>
+        <label class="filter-option"><input type="checkbox" class="category" value="security" checked> Seguridad</label>
+        <label class="filter-option"><input type="checkbox" class="category" value="ai" checked> IA/ML</label>
+        <label class="filter-option"><input type="checkbox" class="category" value="devops" checked> DevOps</label>
+        <label class="filter-option"><input type="checkbox" class="category" value="serverless" checked> Serverless</label>
+        <label class="filter-option"><input type="checkbox" class="category" value="containers" checked> Contenedores</label>
+        <label class="filter-option"><input type="checkbox" class="category" value="integration" checked> Integración</label>
+      </div>
+    </div>
+  </div>
+  
+  <div class="table-container">
+    <table id="cloud-services">
+      <thead>
+        <tr>
+          <th>Categoría</th>
+          <th>Tipo de Servicio</th>
+          <th>AWS</th>
+          <th>Azure</th>
+          <th>Google Cloud</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Cómputo -->
+        <tr data-category="compute">
+          <td rowspan="6">Cómputo</td>
+          <td>Máquinas Virtuales</td>
+          <td class="service-cell">
+            <span class="aws service-name">EC2</span>
+            <span class="service-info">Elastic Compute Cloud ofrece capacidad de cómputo redimensionable en la nube con distintos tipos de instancias optimizadas para diferentes casos de uso.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Virtual Machines</span>
+            <span class="service-info">Infraestructura como servicio (IaaS) que permite crear y ejecutar máquinas virtuales Windows y Linux con múltiples opciones de configuración.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Compute Engine</span>
+            <span class="service-info">Máquinas virtuales que se ejecutan en la infraestructura de Google, con opciones de personalización y escalabilidad automática.</span>
+          </td>
+        </tr>
+        <tr data-category="compute">
+          <td>Auto Escalado</td>
+          <td class="service-cell">
+            <span class="aws service-name">EC2 Auto Scaling</span>
+            <span class="service-info">Permite aumentar o disminuir automáticamente el número de instancias EC2 según las condiciones definidas para mantener la disponibilidad y reducir costos.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Virtual Machine Scale Sets</span>
+            <span class="service-info">Permite crear y administrar un grupo de máquinas virtuales idénticas con balanceo de carga y escalado automático.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Managed Instance Groups</span>
+            <span class="service-info">Grupos de instancias de VM idénticas que se pueden escalar automáticamente y ofrecer alta disponibilidad mediante autohealing.</span>
+          </td>
+        </tr>
+        <tr data-category="compute">
+          <td>Funciones Serverless</td>
+          <td class="service-cell">
+            <span class="aws service-name">Lambda</span>
+            <span class="service-info">Servicio de computación sin servidor que ejecuta código en respuesta a eventos y administra automáticamente los recursos de cómputo subyacentes.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Functions</span>
+            <span class="service-info">Solución serverless para ejecutar fácilmente pequeños fragmentos de código o funciones en la nube sin preocuparse por la infraestructura.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Functions</span>
+            <span class="service-info">Plataforma de ejecución de código serverless donde se ejecuta código en respuesta a eventos, sin provisionar servidores.</span>
+          </td>
+        </tr>
+        <tr data-category="compute">
+          <td>GPU/Procesamiento de Alto Rendimiento</td>
+          <td class="service-cell">
+            <span class="aws service-name">EC2 P3, G4</span>
+            <span class="service-info">Instancias EC2 con GPUs de alto rendimiento para computación acelerada, machine learning, renderizado y cargas de trabajo HPC.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">N-Series VMs</span>
+            <span class="service-info">Máquinas virtuales especializadas con GPUs NVIDIA para cargas de trabajo intensivas en visualización y aprendizaje profundo.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">GPU Instances</span>
+            <span class="service-info">Instancias con GPUs NVIDIA que aceleran cargas de trabajo específicas como machine learning, procesamiento de datos y renderizado.</span>
+          </td>
+        </tr>
+        <tr data-category="compute">
+          <td>Procesamiento en Lote</td>
+          <td class="service-cell">
+            <span class="aws service-name">Batch</span>
+            <span class="service-info">Permite ejecutar trabajos por lotes a cualquier escala sin necesidad de instalar y administrar el software de procesamiento por lotes.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Batch</span>
+            <span class="service-info">Servicio para ejecución de trabajos en paralelo y de alto rendimiento (HPC) a gran escala con capacidad de escalar a miles de VMs.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Batch</span>
+            <span class="service-info">Servicio totalmente gestionado para programar, poner en cola y ejecutar trabajos por lotes en instancias de Compute Engine.</span>
+          </td>
+        </tr>
+        <tr data-category="compute">
+          <td>Kubernetes Gestionado</td>
+          <td class="service-cell">
+            <span class="aws service-name">EKS</span>
+            <span class="service-info">Elastic Kubernetes Service facilita la implementación, gestión y escalado de aplicaciones en contenedores usando Kubernetes sin necesidad de instalar el plano de control.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">AKS</span>
+            <span class="service-info">Azure Kubernetes Service simplifica la implementación y operaciones de Kubernetes, ofreciendo un plano de control gestionado sin costo adicional.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">GKE</span>
+            <span class="service-info">Google Kubernetes Engine proporciona un entorno gestionado para implementar, administrar y escalar aplicaciones en contenedores utilizando la infraestructura de Google.</span>
+          </td>
+        </tr>
+        
+        <!-- Almacenamiento -->
+        <tr data-category="storage">
+          <td rowspan="5">Almacenamiento</td>
+          <td>Almacenamiento de Objetos</td>
+          <td class="service-cell">
+            <span class="aws service-name">S3</span>
+            <span class="service-info">Simple Storage Service ofrece almacenamiento de objetos con alta disponibilidad, seguridad y rendimiento, ideal para cualquier cantidad de datos.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Blob Storage</span>
+            <span class="service-info">Servicio para almacenar grandes cantidades de datos no estructurados como texto o datos binarios accesibles via HTTP/HTTPS.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Storage</span>
+            <span class="service-info">Almacenamiento unificado de objetos para empresas, desde datos activos hasta archivo, con diferentes clases de almacenamiento.</span>
+          </td>
+        </tr>
+        <tr data-category="storage">
+          <td>Almacenamiento en Bloque</td>
+          <td class="service-cell">
+            <span class="aws service-name">EBS</span>
+            <span class="service-info">Elastic Block Store proporciona volúmenes de almacenamiento persistente a nivel de bloque para usar con instancias EC2.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Managed Disks</span>
+            <span class="service-info">Discos virtuales para máquinas virtuales Azure con administración simplificada y alta disponibilidad.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Persistent Disk</span>
+            <span class="service-info">Almacenamiento en bloques duradero y de alto rendimiento para las instancias de Compute Engine.</span>
+          </td>
+        </tr>
+        <tr data-category="storage">
+          <td>Sistemas de Archivos</td>
+          <td class="service-cell">
+            <span class="aws service-name">EFS</span>
+            <span class="service-info">Elastic File System proporciona un sistema de archivos elástico simple, escalable y totalmente gestionado para usar con servicios AWS y recursos on-premises.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Azure Files</span>
+            <span class="service-info">Ofrece recursos compartidos de archivos en la nube completamente gestionados, accesibles mediante los protocolos SMB y NFS estándar.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Filestore</span>
+            <span class="service-info">Servicio de almacenamiento de archivos NFS totalmente gestionado para instancias de Compute Engine y GKE.</span>
+          </td>
+        </tr>
+        <tr data-category="storage">
+          <td>Backup y Recuperación</td>
+          <td class="service-cell">
+            <span class="aws service-name">AWS Backup</span>
+            <span class="service-info">Servicio centralizado para automatizar la protección de datos y facilitar la auditoría de la conformidad con las políticas de copia de seguridad.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Azure Backup</span>
+            <span class="service-info">Solución de backup simple y rentable para realizar copias de seguridad de datos desde máquinas virtuales, bases de datos y más.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Storage Transfer</span>
+            <span class="service-info">Servicio para la importación de datos a Cloud Storage desde otras fuentes de datos en línea.</span>
+          </td>
+        </tr>
+        <tr data-category="storage">
+          <td>Archivado</td>
+          <td class="service-cell">
+            <span class="aws service-name">S3 Glacier</span>
+            <span class="service-info">Clase de almacenamiento de S3 para archivar datos y realizar backups a largo plazo con costes extremadamente bajos.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Archive Storage</span>
+            <span class="service-info">Nivel de Blob Storage optimizado para datos que se acceden raramente y se almacenan por períodos prolongados con los requisitos de durabilidad más estrictos.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Storage Archive</span>
+            <span class="service-info">Clase de almacenamiento para archivado de datos a largo plazo y recuperación de desastres con costes muy bajos.</span>
+          </td>
+        </tr>
+        
+        <!-- Bases de Datos -->
+        <tr data-category="database">
+          <td rowspan="7">Bases de Datos</td>
+          <td>SQL Relacional</td>
+          <td class="service-cell">
+            <span class="aws service-name">RDS</span>
+            <span class="service-info">Amazon Relational Database Service facilita la configuración, operación y escalado de bases de datos relacionales en la nube.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">SQL Database</span>
+            <span class="service-info">Base de datos relacional como servicio en la nube que ofrece alta disponibilidad, escalabilidad y seguridad.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud SQL</span>
+            <span class="service-info">Servicio de base de datos relacional totalmente gestionado que permite configurar, mantener y administrar bases de datos SQL en la nube.</span>
+          </td>
+        </tr>
+        <tr data-category="database">
+          <td>NoSQL - Documentos</td>
+          <td class="service-cell">
+            <span class="aws service-name">DynamoDB</span>
+            <span class="service-info">Base de datos NoSQL de documentos clave-valor totalmente gestionada que ofrece rendimiento rápido y predecible con escalado automático.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Cosmos DB</span>
+            <span class="service-info">Base de datos NoSQL multimodelo que ofrece escalabilidad global y baja latencia para aplicaciones de alta disponibilidad.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Firestore</span>
+            <span class="service-info">Base de datos NoSQL para almacenar, sincronizar y consultar datos para aplicaciones web y móviles a gran escala.</span>
+          </td>
+        </tr>
+        <tr data-category="database">
+          <td>NoSQL - Columnas</td>
+          <td class="service-cell">
+            <span class="aws service-name">Keyspaces</span>
+            <span class="service-info">Base de datos NoSQL de columnas anchas, compatible con Apache Cassandra, que ofrece escalabilidad y rendimiento en la nube.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Cosmos DB</span>
+            <span class="service-info">Base de datos NoSQL multimodelo que ofrece escalabilidad global y baja latencia para aplicaciones de alta disponibilidad.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Bigtable</span>
+            <span class="service-info">Base de datos NoSQL de ancho de columna para grandes volúmenes de datos, con alta disponibilidad y escalabilidad.</span>
+          </td>
+        </tr>
+        <tr data-category="database">
+          <td>En Memoria</td>
+          <td class="service-cell">
+            <span class="aws service-name">ElastiCache</span>
+            <span class="service-info">Servicio web que facilita la implementación, operación y escalado de caches en memoria en la nube.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Cache for Redis</span>
+            <span class="service-info">Servicio de caché en memoria basado en Redis, totalmente gestionado y con alta disponibilidad.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Memorystore</span>
+            <span class="service-info">Servicio de almacenamiento en caché en memoria para Redis y Memcached, totalmente gestionado y escalable.</span>
+          </td>
+        </tr>
+        <tr data-category="database">
+          <td>Data Warehouse</td>
+          <td class="service-cell">
+            <span class="aws service-name">Redshift</span>
+            <span class="service-info">Servicio de almacenamiento de datos en columnas y procesamiento analítico en la nube, que permite ejecutar consultas complejas.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Synapse Analytics</span>
+            <span class="service-info">Servicio de análisis que combina integración de datos, almacenamiento de datos y análisis con gran escala y rendimiento.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">BigQuery</span>
+            <span class="service-info">Servicio de almacenamiento de datos y análisis en tiempo real que permite ejecutar consultas SQL altamente eficientes.</span>
+          </td>
+        </tr>
+        <tr data-category="database">
+          <td>Migración de Base de Datos</td>
+          <td class="service-cell">
+            <span class="aws service-name">DMS</span>
+            <span class="service-info">AWS Database Migration Service facilita y automatiza la migración de bases de datos a AWS.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Database Migration Service</span>
+            <span class="service-info">Servicio que ayuda a migrar bases de datos a Azure con herramientas y plantillas simplificadas.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Database Migration Service</span>
+            <span class="service-info">Servicio que ayuda a migrar bases de datos a Google Cloud con herramientas y plantillas simplificadas.</span>
+          </td>
+        </tr>
+        <tr data-category="database">
+          <td>Base de Datos de Grafos</td>
+          <td class="service-cell">
+            <span class="aws service-name">Neptune</span>
+            <span class="service-info">Base de datos de grafos totalmente gestionada que facilita la creación y consulta de grafos en la nube.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Cosmos DB</span>
+            <span class="service-info">Base de datos NoSQL multimodelo que ofrece escalabilidad global y baja latencia para aplicaciones de alta disponibilidad.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">-</span>
+          </td>
+        </tr>
+        
+        <!-- Redes -->
+        <tr data-category="network">
+          <td rowspan="6">Redes</td>
+          <td>Red Virtual</td>
+          <td class="service-cell">
+            <span class="aws service-name">VPC</span>
+            <span class="service-info">Amazon Virtual Private Cloud permite aprovisionar una sección aislada de la nube de AWS donde puede definir y controlar una red virtual.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Virtual Network</span>
+            <span class="service-info">Red privada en la nube de Azure que permite conectar recursos de Azure entre sí y con redes locales.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">VPC</span>
+            <span class="service-info">Virtual Private Cloud de Google permite aprovisionar una red virtual aislada dentro de la infraestructura de Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="network">
+          <td>CDN</td>
+          <td class="service-cell">
+            <span class="aws service-name">CloudFront</span>
+            <span class="service-info">Red de entrega de contenido (CDN) que distribuye contenido a través de una red global de servidores.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">CDN</span>
+            <span class="service-info">Servicio de red de entrega de contenido que acelera la entrega de contenido estático y dinámico a los usuarios finales.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud CDN</span>
+            <span class="service-info">Servicio de red de entrega de contenido que utiliza la infraestructura global de Google para acelerar la entrega de contenido.</span>
+          </td>
+        </tr>
+        <tr data-category="network">
+          <td>Balanceador de Carga</td>
+          <td class="service-cell">
+            <span class="aws service-name">ELB, ALB, NLB</span>
+            <span class="service-info">Elastic Load Balancing distribuye automáticamente el tráfico de entrada de aplicaciones entre múltiples destinos, como instancias EC2.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Load Balancer</span>
+            <span class="service-info">Servicio que distribuye el tráfico de red entrante entre varios recursos para garantizar alta disponibilidad y fiabilidad.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Load Balancing</span>
+            <span class="service-info">Servicio que distribuye el tráfico de red entrante entre varios recursos para garantizar alta disponibilidad y fiabilidad.</span>
+          </td>
+        </tr>
+        <tr data-category="network">
+          <td>DNS</td>
+          <td class="service-cell">
+            <span class="aws service-name">Route 53</span>
+            <span class="service-info">Servicio de dominio y DNS en la nube que proporciona una forma altamente disponible y escalable de enrutar a los usuarios finales.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">DNS</span>
+            <span class="service-info">Servicio de sistema de nombres de dominio (DNS) que proporciona resolución de nombres para recursos de Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud DNS</span>
+            <span class="service-info">Servicio de DNS en la nube que proporciona una forma altamente disponible y escalable de enrutar a los usuarios finales.</span>
+          </td>
+        </tr>
+        <tr data-category="network">
+          <td>Firewall</td>
+          <td class="service-cell">
+            <span class="aws service-name">Security Groups, WAF</span>
+            <span class="service-info">Control de acceso a nivel de instancia y protección contra ataques web para aplicaciones en AWS.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Firewall, WAF</span>
+            <span class="service-info">Protección contra amenazas y gestión de políticas de seguridad para aplicaciones en Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Armor, Firewall</span>
+            <span class="service-info">Protección contra amenazas y gestión de políticas de seguridad para aplicaciones en Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="network">
+          <td>Conexión Privada</td>
+          <td class="service-cell">
+            <span class="aws service-name">Direct Connect</span>
+            <span class="service-info">Conexión de red dedicada y privada desde sus instalaciones hasta AWS.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">ExpressRoute</span>
+            <span class="service-info">Conexión privada y dedicada entre su red local y Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Dedicated Interconnect</span>
+            <span class="service-info">Conexión de red dedicada y privada desde sus instalaciones hasta Google Cloud.</span>
+          </td>
+        </tr>
+        
+        <!-- Seguridad -->
+        <tr data-category="security">
+          <td rowspan="6">Seguridad</td>
+          <td>Gestión de Identidad</td>
+          <td class="service-cell">
+            <span class="aws service-name">IAM</span>
+            <span class="service-info">AWS Identity and Access Management permite gestionar el acceso a los servicios y recursos de AWS de forma segura.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Azure AD</span>
+            <span class="service-info">Servicio de gestión de identidades y accesos que proporciona autenticación y autorización para aplicaciones en Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud IAM</span>
+            <span class="service-info">Google Cloud Identity and Access Management proporciona control de acceso a los recursos de Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="security">
+          <td>Protección DDoS</td>
+          <td class="service-cell">
+            <span class="aws service-name">Shield</span>
+            <span class="service-info">Servicio de protección contra ataques DDoS que ayuda a proteger aplicaciones en AWS.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">DDoS Protection</span>
+            <span class="service-info">Protección contra ataques DDoS para aplicaciones en Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Armor</span>
+            <span class="service-info">Protección contra amenazas y gestión de políticas de seguridad para aplicaciones en Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="security">
+          <td>Gestión de Claves</td>
+          <td class="service-cell">
+            <span class="aws service-name">KMS</span>
+            <span class="service-info">AWS Key Management Service facilita la creación y el control de las claves de cifrado utilizadas para proteger los datos.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Key Vault</span>
+            <span class="service-info">Servicio que permite almacenar y acceder de forma segura a secretos, claves y certificados.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud KMS</span>
+            <span class="service-info">Google Cloud Key Management Service permite gestionar las claves de cifrado utilizadas para proteger los datos.</span>
+          </td>
+        </tr>
+        <tr data-category="security">
+          <td>Evaluación de Seguridad</td>
+          <td class="service-cell">
+            <span class="aws service-name">Inspector</span>
+            <span class="service-info">Servicio que ayuda a mejorar la seguridad de las aplicaciones al identificar vulnerabilidades y desviaciones de las mejores prácticas.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Security Center</span>
+            <span class="service-info">Centro unificado para la gestión de la seguridad de los recursos de Azure, que proporciona recomendaciones y alertas.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Security Command Center</span>
+            <span class="service-info">Herramienta de gestión de seguridad que proporciona visibilidad y control sobre la postura de seguridad de Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="security">
+          <td>Seguridad de Datos</td>
+          <td class="service-cell">
+            <span class="aws service-name">Macie</span>
+            <span class="service-info">Servicio de seguridad de datos que utiliza machine learning para descubrir, clasificar y proteger datos sensibles en AWS.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Purview</span>
+            <span class="service-info">Servicio de gobernanza de datos que ayuda a descubrir, clasificar y gestionar datos en Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Data Loss Prevention</span>
+            <span class="service-info">Servicio que ayuda a identificar y proteger la información sensible en Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="security">
+          <td>Gestión de Certificados</td>
+          <td class="service-cell">
+            <span class="aws service-name">Certificate Manager</span>
+            <span class="service-info">Servicio que facilita la creación, importación y gestión de certificados SSL/TLS para proteger las aplicaciones.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">App Service Certificates</span>
+            <span class="service-info">Servicio para la gestión de certificados SSL/TLS para aplicaciones en Azure App Service.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Certificate Authority Service</span>
+            <span class="service-info">Servicio que permite gestionar la emisión y renovación de certificados SSL/TLS para dominios y aplicaciones.</span>
+          </td>
+        </tr>
+        
+        <!-- IA/ML -->
+        <tr data-category="ai">
+          <td rowspan="5">IA/ML</td>
+          <td>Modelos de IA Preentrenados</td>
+          <td class="service-cell">
+            <span class="aws service-name">Rekognition, Comprehend, Polly</span>
+            <span class="service-info">Servicios de IA que permiten añadir fácilmente capacidades de visión por computadora, procesamiento de lenguaje natural y síntesis de voz a las aplicaciones.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Cognitive Services</span>
+            <span class="service-info">Conjunto de API y servicios de IA que permiten a las aplicaciones ver, oír, hablar y entender.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Vertex AI, Vision AI</span>
+            <span class="service-info">Servicios de IA que permiten añadir fácilmente capacidades de visión por computadora y aprendizaje automático a las aplicaciones.</span>
+          </td>
+        </tr>
+        <tr data-category="ai">
+          <td>Machine Learning</td>
+          <td class="service-cell">
+            <span class="aws service-name">SageMaker</span>
+            <span class="service-info">Servicio que proporciona todas las herramientas necesarias para construir, entrenar e implementar modelos de machine learning a gran escala.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Machine Learning</span>
+            <span class="service-info">Servicio que proporciona un entorno completo para el desarrollo y entrenamiento de modelos de machine learning.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Vertex AI</span>
+            <span class="service-info">Plataforma de Google Cloud para el desarrollo y despliegue de modelos de machine learning.</span>
+          </td>
+        </tr>
+        <tr data-category="ai">
+          <td>Procesamiento de Lenguaje</td>
+          <td class="service-cell">
+            <span class="aws service-name">Comprehend, Lex</span>
+            <span class="service-info">Servicios de procesamiento de lenguaje natural que permiten a las aplicaciones entender y generar texto en lenguaje humano.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Text Analytics, LUIS</span>
+            <span class="service-info">Servicios de análisis de texto y comprensión del lenguaje que permiten a las aplicaciones procesar y entender texto en lenguaje natural.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Natural Language API</span>
+            <span class="service-info">API que permite a las aplicaciones procesar y entender texto en lenguaje natural.</span>
+          </td>
+        </tr>
+        <tr data-category="ai">
+          <td>Reconocimiento de Imágenes</td>
+          <td class="service-cell">
+            <span class="aws service-name">Rekognition</span>
+            <span class="service-info">Servicio que permite añadir fácilmente capacidades de reconocimiento de imágenes y análisis de contenido visual a las aplicaciones.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Computer Vision</span>
+            <span class="service-info">Servicio que permite extraer información y analizar imágenes y videos para identificar objetos, texto y actividades.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Vision AI</span>
+            <span class="service-info">Servicio que permite añadir fácilmente capacidades de visión por computadora a las aplicaciones.</span>
+          </td>
+        </tr>
+        <tr data-category="ai">
+          <td>Grandes Modelos de Lenguaje</td>
+          <td class="service-cell">
+            <span class="aws service-name">Bedrock</span>
+            <span class="service-info">Servicio que proporciona acceso a modelos de lenguaje de última generación para tareas de procesamiento de lenguaje natural.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Azure OpenAI</span>
+            <span class="service-info">Servicio que proporciona acceso a modelos de lenguaje de última generación para tareas de procesamiento de lenguaje natural.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Vertex AI, Gemini</span>
+            <span class="service-info">Servicios que proporcionan acceso a modelos de lenguaje de última generación para tareas de procesamiento de lenguaje natural.</span>
+          </td>
+        </tr>
+        
+        <!-- DevOps -->
+        <tr data-category="devops">
+          <td rowspan="5">DevOps</td>
+          <td>CI/CD</td>
+          <td class="service-cell">
+            <span class="aws service-name">CodePipeline, CodeBuild</span>
+            <span class="service-info">Servicios que permiten automatizar las fases de construcción, prueba y despliegue de aplicaciones en AWS.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">DevOps, Pipelines</span>
+            <span class="service-info">Servicios que permiten automatizar la construcción, prueba y despliegue de aplicaciones en Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Build</span>
+            <span class="service-info">Servicio que permite construir, probar y desplegar aplicaciones en Google Cloud de manera rápida y eficiente.</span>
+          </td>
+        </tr>
+        <tr data-category="devops">
+          <td>Registro de Contenedores</td>
+          <td class="service-cell">
+            <span class="aws service-name">ECR</span>
+            <span class="service-info">Amazon Elastic Container Registry es un servicio de registro de contenedores que facilita el almacenamiento y la gestión de imágenes de contenedores.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Container Registry</span>
+            <span class="service-info">Servicio que permite almacenar y gestionar imágenes de contenedores de forma segura y escalable.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Artifact Registry</span>
+            <span class="service-info">Servicio que permite almacenar y gestionar artefactos de software, incluidas imágenes de contenedores, de forma segura y escalable.</span>
+          </td>
+        </tr>
+        <tr data-category="devops">
+          <td>Monitoreo</td>
+          <td class="service-cell">
+            <span class="aws service-name">CloudWatch</span>
+            <span class="service-info">Servicio de monitoreo que proporciona datos y análisis en tiempo real para ayudar a los desarrolladores a optimizar el rendimiento de las aplicaciones.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Monitor</span>
+            <span class="service-info">Servicio que proporciona un conjunto completo de herramientas para supervisar y diagnosticar el rendimiento de las aplicaciones en Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Monitoring</span>
+            <span class="service-info">Servicio que proporciona visibilidad y análisis del rendimiento de las aplicaciones y la infraestructura en Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="devops">
+          <td>Logging</td>
+          <td class="service-cell">
+            <span class="aws service-name">CloudWatch Logs</span>
+            <span class="service-info">Servicio que permite supervisar, almacenar y acceder a los registros de las aplicaciones y recursos de AWS.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Log Analytics</span>
+            <span class="service-info">Servicio que permite recopilar, analizar y visualizar datos de registro de aplicaciones y recursos en Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Logging</span>
+            <span class="service-info">Servicio que permite almacenar, buscar y analizar registros de aplicaciones y recursos en Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="devops">
+          <td>Gestión de Secretos</td>
+          <td class="service-cell">
+            <span class="aws service-name">Secrets Manager</span>
+            <span class="service-info">Servicio que permite proteger el acceso a las aplicaciones, servicios y recursos de AWS sin necesidad de codificar credenciales.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Key Vault</span>
+            <span class="service-info">Servicio que permite almacenar y acceder de forma segura a secretos, claves y certificados.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Secret Manager</span>
+            <span class="service-info">Servicio que permite almacenar, gestionar y acceder a secretos de forma segura en Google Cloud.</span>
+          </td>
+        </tr>
+        
+        <!-- Serverless -->
+        <tr data-category="serverless">
+          <td rowspan="4">Serverless</td>
+          <td>Funciones</td>
+          <td class="service-cell">
+            <span class="aws service-name">Lambda</span>
+            <span class="service-info">Servicio de computación sin servidor que ejecuta código en respuesta a eventos y administra automáticamente los recursos de cómputo subyacentes.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Functions</span>
+            <span class="service-info">Solución serverless para ejecutar fácilmente pequeños fragmentos de código o funciones en la nube sin preocuparse por la infraestructura.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Functions</span>
+            <span class="service-info">Plataforma de ejecución de código serverless donde se ejecuta código en respuesta a eventos, sin provisionar servidores.</span>
+          </td>
+        </tr>
+        <tr data-category="serverless">
+          <td>Orquestación</td>
+          <td class="service-cell">
+            <span class="aws service-name">Step Functions</span>
+            <span class="service-info">Servicio que permite coordinar múltiples servicios de AWS en flujos de trabajo serverless para construir aplicaciones complejas.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Logic Apps, Durable Functions</span>
+            <span class="service-info">Servicios que permiten crear flujos de trabajo automatizados y orquestar procesos de negocio en la nube.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Workflows</span>
+            <span class="service-info">Servicio que permite orquestar y automatizar tareas y procesos en Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="serverless">
+          <td>Eventos</td>
+          <td class="service-cell">
+            <span class="aws service-name">EventBridge</span>
+            <span class="service-info">Servicio que facilita la conexión de aplicaciones mediante eventos en tiempo real.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Event Grid</span>
+            <span class="service-info">Servicio que permite crear aplicaciones basadas en eventos mediante la conexión de servicios y aplicaciones en Azure.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Eventarc</span>
+            <span class="service-info">Servicio que permite gestionar y enrutar eventos entre diferentes servicios y aplicaciones en Google Cloud.</span>
+          </td>
+        </tr>
+        <tr data-category="serverless">
+          <td>API Gateway</td>
+          <td class="service-cell">
+            <span class="aws service-name">API Gateway</span>
+            <span class="service-info">Servicio que permite crear, publicar, mantener, monitorear y asegurar APIs a cualquier escala.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">API Management</span>
+            <span class="service-info">Servicio que permite crear y publicar APIs seguras y escalables para sus aplicaciones.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">API Gateway</span>
+            <span class="service-info">Servicio que permite crear, publicar, mantener, monitorear y asegurar APIs a cualquier escala.</span>
+          </td>
+        </tr>
+        
+        <!-- Contenedores -->
+        <tr data-category="containers">
+          <td rowspan="4">Contenedores</td>
+          <td>Kubernetes Gestionado</td>
+          <td class="service-cell">
+            <span class="aws service-name">EKS</span>
+            <span class="service-info">Elastic Kubernetes Service facilita la implementación, gestión y escalado de aplicaciones en contenedores usando Kubernetes sin necesidad de instalar el plano de control.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">AKS</span>
+            <span class="service-info">Azure Kubernetes Service simplifica la implementación y operaciones de Kubernetes, ofreciendo un plano de control gestionado sin costo adicional.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">GKE</span>
+            <span class="service-info">Google Kubernetes Engine proporciona un entorno gestionado para implementar, administrar y escalar aplicaciones en contenedores utilizando la infraestructura de Google.</span>
+          </td>
+        </tr>
+        <tr data-category="containers">
+          <td>Servicio de Contenedores</td>
+          <td class="service-cell">
+            <span class="aws service-name">ECS, Fargate</span>
+            <span class="service-info">Amazon Elastic Container Service y Fargate permiten ejecutar y escalar aplicaciones en contenedores sin necesidad de administrar la infraestructura subyacente.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Container Instances</span>
+            <span class="service-info">Servicio que permite ejecutar contenedores sin necesidad de administrar servidores o infraestructura.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Run</span>
+            <span class="service-info">Servicio que permite ejecutar aplicaciones en contenedores de forma totalmente gestionada, escalando automáticamente según la demanda.</span>
+          </td>
+        </tr>
+        <tr data-category="containers">
+          <td>Registro de Contenedores</td>
+          <td class="service-cell">
+            <span class="aws service-name">ECR</span>
+            <span class="service-info">Amazon Elastic Container Registry es un servicio de registro de contenedores que facilita el almacenamiento y la gestión de imágenes de contenedores.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Container Registry</span>
+            <span class="service-info">Servicio que permite almacenar y gestionar imágenes de contenedores de forma segura y escalable.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Artifact Registry</span>
+            <span class="service-info">Servicio que permite almacenar y gestionar artefactos de software, incluidas imágenes de contenedores, de forma segura y escalable.</span>
+          </td>
+        </tr>
+        <tr data-category="containers">
+          <td>Servicio Serverless de Contenedores</td>
+          <td class="service-cell">
+            <span class="aws service-name">Fargate, App Runner</span>
+            <span class="service-info">Servicios que permiten ejecutar aplicaciones en contenedores de forma totalmente gestionada, sin necesidad de administrar la infraestructura subyacente.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Container Apps</span>
+            <span class="service-info">Servicio que permite ejecutar aplicaciones en contenedores de forma totalmente gestionada, escalando automáticamente según la demanda.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Cloud Run</span>
+            <span class="service-info">Servicio que permite ejecutar aplicaciones en contenedores de forma totalmente gestionada, escalando automáticamente según la demanda.</span>
+          </td>
+        </tr>
+        
+        <!-- Integración -->
+        <tr data-category="integration">
+          <td rowspan="4">Integración</td>
+          <td>Colas de Mensajes</td>
+          <td class="service-cell">
+            <span class="aws service-name">SQS</span>
+            <span class="service-info">Amazon Simple Queue Service ofrece colas de mensajes completamente gestionadas que permiten desacoplar y escalar microservicios, sistemas distribuidos y aplicaciones en la nube.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Service Bus</span>
+            <span class="service-info">Servicio de mensajería que conecta aplicaciones, servicios y dispositivos en la nube y en entornos locales.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Pub/Sub</span>
+            <span class="service-info">Servicio de mensajería en tiempo real que permite a las aplicaciones enviar y recibir mensajes entre sí de forma asíncrona.</span>
+          </td>
+        </tr>
+        <tr data-category="integration">
+          <td>Notificaciones</td>
+          <td class="service-cell">
+            <span class="aws service-name">SNS</span>
+            <span class="service-info">Amazon Simple Notification Service es un servicio de mensajería que coordina y gestiona la entrega de mensajes a suscriptores o aplicaciones.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Notification Hubs</span>
+            <span class="service-info">Servicio que permite enviar notificaciones push a cualquier dispositivo, en cualquier plataforma, de forma escalable.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Pub/Sub</span>
+            <span class="service-info">Servicio de mensajería en tiempo real que permite a las aplicaciones enviar y recibir mensajes entre sí de forma asíncrona.</span>
+          </td>
+        </tr>
+        <tr data-category="integration">
+          <td>ETL</td>
+          <td class="service-cell">
+            <span class="aws service-name">Glue</span>
+            <span class="service-info">Servicio de ETL (extracción, transformación y carga) que facilita la preparación y carga de datos para análisis.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">Data Factory</span>
+            <span class="service-info">Servicio de integración de datos que permite crear, programar y administrar flujos de trabajo de datos en la nube.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">Dataflow</span>
+            <span class="service-info">Servicio que permite procesar y analizar datos en tiempo real o por lotes, utilizando Apache Beam.</span>
+          </td>
+        </tr>
+        <tr data-category="integration">
+          <td>API Gateway</td>
+          <td class="service-cell">
+            <span class="aws service-name">API Gateway</span>
+            <span class="service-info">Servicio que permite crear, publicar, mantener, monitorear y asegurar APIs a cualquier escala.</span>
+          </td>
+          <td class="service-cell">
+            <span class="azure service-name">API Management</span>
+            <span class="service-info">Servicio que permite crear y publicar APIs seguras y escalables para sus aplicaciones.</span>
+          </td>
+          <td class="service-cell">
+            <span class="gcp service-name">API Gateway</span>
+            <span class="service-info">Servicio que permite crear, publicar, mantener, monitorear y asegurar APIs a cualquier escala.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <script>
+    // Función para aplicar filtros
+    function applyFilters() {
+      const selectedProviders = Array.from(document.querySelectorAll('.provider:checked')).map(cb => cb.value);
+      const selectedCategories = Array.from(document.querySelectorAll('.category:checked')).map(cb => cb.value);
+      
+      // Show/hide columns based on selected providers
+      const tableHeader = document.querySelector('#cloud-services thead tr');
+      const tableRows = document.querySelectorAll('#cloud-services tbody tr');
+      
+      // Handle provider columns (starting from index 2 as 0=Category, 1=Type)
+      const providerNames = ['aws', 'azure', 'gcp'];
+      for (let i = 0; i < providerNames.length; i++) {
+        const columnIndex = i + 2;
+        const isSelected = selectedProviders.includes(providerNames[i]);
+        
+        // Show/hide header column
+        if (tableHeader.cells[columnIndex]) {
+          tableHeader.cells[columnIndex].style.display = isSelected ? '' : 'none';
+        }
+        
+        // Show/hide data cells in that column
+        tableRows.forEach(row => {
+          if (row.cells[columnIndex]) {
+            row.cells[columnIndex].style.display = isSelected ? '' : 'none';
+          }
+        });
+      }
+      
+      // Handle category rows
+      tableRows.forEach(row => {
+        const category = row.getAttribute('data-category');
+        const isVisible = selectedCategories.includes(category);
+        row.style.display = isVisible ? '' : 'none';
+      });
+    }
+    
+    // Aplicar filtros inmediatamente al cambiar cualquier checkbox
+    document.querySelectorAll('.provider, .category').forEach(checkbox => {
+      checkbox.addEventListener('change', applyFilters);
+    });
+    
+    // Funcionalidad para seleccionar/deseleccionar todos
+    document.getElementById('toggle-providers').addEventListener('click', function() {
+      const checkboxes = document.querySelectorAll('.provider');
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      
+      checkboxes.forEach(cb => {
+        cb.checked = !allChecked;
+      });
+      
+      applyFilters();
+    });
+    
+    document.getElementById('toggle-categories').addEventListener('click', function() {
+      const checkboxes = document.querySelectorAll('.category');
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      
+      checkboxes.forEach(cb => {
+        cb.checked = !allChecked;
+      });
+      
+      applyFilters();
+    });
+    
+    // Aplicar filtros al cargar la página
+    applyFilters();
+  </script>
+</body>
+</html>
