@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8" /><title>App con Backend</title></head>
+<body>
+  <h1>Hola Mundo con Backend</h1>
+  <button id="btn">Pedir saludo</button>
+  <p id="saludo"></p>
+
+  <script>
+    document.getElementById('btn').onclick = () => {
+      fetch('http://localhost:3010/api/saludo')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('saludo').textContent = data.mensaje;
+        });
+    };
+  </script>
+</body>
+</html>
