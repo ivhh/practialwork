@@ -35,7 +35,7 @@ docker build -t mi-imagen-nginx .
 5. Ejecutar un contenedor a partir de la imagen creada con el siguiente comando:
 
 ```bash
-docker run -d -p 8080:80 mi-imagen-nginx
+docker run -d -p 8081:80 mi-imagen-nginx
 ```
 
 6. Abrir un navegador y acceder a `http://localhost:8080`. Deberías ver el mensaje "¡Hola mundo desde Docker!" y "Funcionó!!!!".
