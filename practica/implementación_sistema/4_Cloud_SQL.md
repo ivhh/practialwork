@@ -93,3 +93,73 @@ Asegúrate de que los servicios que deben conectarse cumplan con:
 ➡️ Continúa con la siguiente guía para desplegar las Cloud Functions.
 
 ---
+
+## ⚙️ Opción avanzada: Validación de usuarios en el login usando Cloud SQL (opcional)
+
+Por defecto, el servicio de autenticación usa credenciales fijas para simplificar el flujo. Si quieres un escenario más realista, puedes crear una tabla de usuarios en Cloud SQL y modificar el código del auth-service para validar contra la base de datos.
+
+### 1. Crear la tabla de usuarios
+
+En la base de datos `auth_service`, ejecuta desde la consola SQL web:
+
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password VARCHAR(100) NOT NULL -- Idealmente, almacena hashes
+);
+
+INSERT INTO users (username, password) VALUES ('demo', 'demo123');
+```
+
+### 2. Modificar el código del auth-service (Node.js)
+
+Agrega la dependencia `pg` en `package.json`:
+```json
+"pg": "^8.11.1"
+```
+
+Ejemplo de conexión y validación en `src/index.js`:
+```javascript
+const { Pool } = require('pg');
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  port: 5432,
+});
+
+app.post('/login', async (req, res) => {
+  const { user, pass } = req.body;
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE username=$1 AND password=$2', [user, pass]);
+    if (result.rows.length > 0) {
+      const token = sign({ user });
+      return res.json({ token });
+    }
+    res.status(401).json({ error: 'Credenciales inválidas' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error de servidor' });
+  }
+});
+```
+
+> ⚠️ En producción, almacena contraseñas como hashes y nunca en texto plano.
+
+### 3. Variables de entorno necesarias
+
+Al desplegar en Cloud Run, agrega estas variables de entorno:
+- `DB_USER`: usuario de la base de datos (ej: `appuser`)
+- `DB_PASS`: contraseña
+- `DB_HOST`: IP privada de la instancia Cloud SQL
+- `DB_NAME`: `auth_service`
+
+### 4. Conexión segura
+
+- Usa el conector de VPC si la instancia solo tiene IP privada.
+- Otorga el rol **Cloud SQL Client** a la cuenta de servicio del auth-service.
+
+---
+
+Así puedes tener un login realista validando usuarios desde Cloud SQL, manteniendo la opción simple para pruebas y la avanzada para escenarios reales.
