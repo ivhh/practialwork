@@ -1,0 +1,3 @@
+[submodule "git_test"]
+	path = git_test
+	url = https://github.com/ivhh/git_test.git

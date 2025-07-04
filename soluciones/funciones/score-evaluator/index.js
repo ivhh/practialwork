@@ -4,13 +4,14 @@
 
 const { Storage } = require('@google-cloud/storage');
 const storage = new Storage();
+const functions = require('@google-cloud/functions-framework');
 
 /**
  * HTTP Cloud Function
  * @param {Object} req Express request object
  * @param {Object} res Express response object
  */
-exports.scoreEvaluator = async (req, res) => {
+functions.http('helloHttp', async (req, res) => {
   const bucketName = process.env.BUCKET_NAME;
   const rut = req.body.rut || req.query.rut;
   if (!rut) return res.status(400).json({ error: 'Falta rut' });
@@ -29,4 +30,4 @@ exports.scoreEvaluator = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Error al calcular score', details: err.message });
   }
-};
+});
