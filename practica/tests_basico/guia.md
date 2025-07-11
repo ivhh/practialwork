@@ -74,8 +74,8 @@ En esta parte, probaremos la lógica del backend sin tocar la base de datos. Usa
     - Pega el siguiente código en `backend/users.test.js`. Fíjate cómo **no usamos una base de datos real**, sino que simulamos la respuesta.
     ```javascript
     // filepath: soluciones/docker_compose/backend/users.test.js
-    import request from 'supertest';
-    import express from 'express';
+    const express = require('express');
+    const request = require('supertest');
 
     // Creamos una app de Express falsa para el test
     const app = express();
