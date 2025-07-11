@@ -121,7 +121,7 @@ Ahora, vamos a probar que el backend se integra correctamente con la base de dat
     - Pega el siguiente código en `backend/integration.test.js`. Este test hará una petición HTTP real al servidor que se está ejecutando dentro del contenedor, el cual a su vez se conectará a la base de datos.
     ```javascript
     // filepath: soluciones/docker_compose/backend/integration.test.js
-    import request from 'supertest';
+    const request = require('supertest');
 
     // La URL del backend dentro de la red de Docker
     const API_URL = 'http://localhost:5000';
