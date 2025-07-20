@@ -29,13 +29,33 @@
     ```bash
     cd practialwork/soluciones/docker_compose/
     ```
+4.  **Modificar docker-compose.yml para desarrollo:**
+    - Antes de levantar la aplicación, necesitamos añadir mount binds para poder editar código fácilmente. Abre `docker-compose.yml` y modifica el servicio backend:
+    ```yaml
+      backend:
+        build: ./backend
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
+          - "traefik.http.services.backend.loadbalancer.server.port=5000"
+        networks:
+          - webnet
+        environment:
+          DATABASE_URL: postgres://user:password@db/mydatabase
+        depends_on:
+          - db
+        volumes:
+          - ./backend:/app              # Mount bind para editar código
+          - /app/node_modules           # Volumen anónimo para proteger node_modules
+    ```
+    > **Explicación Técnica:** El primer volumen (`./backend:/app`) permite editar archivos localmente. El segundo (`/app/node_modules`) es un volumen anónimo que protege la carpeta `node_modules` instalada durante el build del contenedor, evitando que sea sobrescrita por el mount bind.
 
-4.  **Levantar la aplicación:** Usa Docker Compose para construir y levantar todos los servicios en segundo plano.
+5.  **Levantar la aplicación:** Usa Docker Compose para construir y levantar todos los servicios en segundo plano.
     ```bash
     docker-compose up -d --build
     ```
 
-5.  **Verificar que todo funciona:**
+6.  **Verificar que todo funciona:**
     - Abre la vista previa web de Cloud Shell en el puerto `8080`.
     - Deberías ver la aplicación "Gestor de Tareas".
     - Prueba a crear un usuario y un proyecto para confirmar que la comunicación con el backend y la base de datos es correcta.
@@ -49,7 +69,7 @@ En esta parte, probaremos la lógica del backend sin tocar la base de datos. Usa
 1.  **Instalar dependencias de desarrollo:**
     - Entra al contenedor del backend para instalar las herramientas de testing.
     ```bash
-    docker-compose exec backend npm install jest supertest --save-dev
+    docker-compose exec backend npm install jest supertest
     ```
     *Esto modificará tu `package.json` y `package-lock.json` locales.*
 
@@ -218,19 +238,19 @@ Esta es la prueba más completa. Verificaremos que el `backend` principal se com
     const PORT = 5001;
 
     app.post('/validate', (req, res) => {
-      const { userId } = req.body;
-      console.log(`Validando disponibilidad para el usuario: ${userId}`);
+        const { userId } = req.body;
+        console.log(`Validando disponibilidad para el usuario: ${userId}`);
 
-      // Lógica de simulación: el usuario con ID 2 siempre está ocupado.
-      if (parseInt(userId, 10) === 2) {
+        // Lógica de simulación: el usuario con ID 2 siempre está ocupado.
+        if (parseInt(userId, 10) === 2) {
         return res.json({ userId, available: false, reason: "User is on vacation" });
-      }
-      
-      res.json({ userId, available: true });
+        }
+        
+        res.json({ userId, available: true });
     });
 
     app.listen(PORT, () => {
-      console.log(`Availability Validator corriendo en el puerto ${PORT}`);
+        console.log(`Availability Validator corriendo en el puerto ${PORT}`);
     });
     ```
     > **Nota del Instructor:** Hemos cambiado la lógica para que el usuario con **ID 2** sea el no disponible. Esto lo hacemos para que coincida con nuestro caso de prueba.
@@ -242,7 +262,7 @@ Esta es la prueba más completa. Verificaremos que el `backend` principal se com
 
     ```yaml
     # filepath: soluciones/docker_compose/docker-compose.yml
-    version: '3.8'
+    version: '3.3'
 
     services:
       traefik:
@@ -297,11 +317,17 @@ Esta es la prueba más completa. Verificaremos que el `backend` principal se com
           - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
           - "traefik.http.routers.backend.service=backend"
           - "traefik.http.services.backend.loadbalancer.server.port=5000"
+        volumes:
+          - ./backend:/app              # Mount bind para editar código
+          - /app/node_modules           # Volumen anónimo para proteger node_modules
 
       availability_validator:
         build: ./availability_validator
         networks:
           - webnet
+        volumes:
+          - ./availability_validator:/app
+          - /app/node_modules           # Volumen anónimo para proteger node_modules
         # No necesita labels de Traefik, es un servicio interno
 
     networks:
@@ -320,7 +346,7 @@ Esta es la prueba más completa. Verificaremos que el `backend` principal se com
     ```javascript
     // filepath: soluciones/docker_compose/backend/index.js
     // ... (importaciones existentes) ...
-    import axios from 'axios'; // Importar axios
+    import axios from 'axios';
 
     // ... (código existente) ...
 
@@ -356,6 +382,7 @@ Esta es la prueba más completa. Verificaremos que el `backend` principal se com
 
 1.  **Reiniciar Docker Compose con el nuevo servicio:**
     ```bash
+    docker-compose down
     docker-compose up -d --build
     ```
 
@@ -369,54 +396,56 @@ Esta es la prueba más completa. Verificaremos que el `backend` principal se com
 
     ```javascript
     // filepath: soluciones/docker_compose/backend/inter_service.test.js
-    import request from 'supertest';
+    const request = require('supertest'); // Importar supertest como un objeto común
     const API_URL = 'http://localhost:5000';
 
     describe('Inter-Service Integration: Task Assignment', () => {
-      let testProject, testTask;
+        let testProject, testTask;
 
-      // Hook `beforeAll`: Se ejecuta una vez antes de todos los tests de este bloque.
-      // Lo usamos para crear un proyecto y una tarea que serán compartidos entre los tests.
-      // Esto evita repetir código de creación en cada `it`.
-      beforeAll(async () => {
+        // Hook `beforeAll`: Se ejecuta una vez antes de todos los tests de este bloque.
+        // Lo usamos para crear un proyecto y una tarea que serán compartidos entre los tests.
+        // Esto evita repetir código de creación en cada `it`.
+        beforeAll(async () => {
         const projectRes = await request(API_URL).put('/api/projects').send({ name: 'project_for_assignment' });
         testProject = projectRes.body;
 
         const taskRes = await request(API_URL).post(`/api/projects/${testProject.id}/tasks`).send({ title: 'task_to_be_assigned' });
         testTask = taskRes.body;
-      });
+        });
 
-      it('should successfully assign a task to an available user', async () => {
-        // 1. Crear un usuario específico para este test que sabemos que estará disponible.
-        const availableUserRes = await request(API_URL).put('/api/users').send({ username: 'available_user' });
+        it('should successfully assign a task to an available user', async () => {
+        // 1. Crear un usuario específico para este test con nombre único basado en timestamp.
+        const uniqueUsername = `available_user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        const availableUserRes = await request(API_URL).put('/api/users').send({ username: uniqueUsername });
         const availableUser = availableUserRes.body;
 
         // 2. Intentar asignar la tarea a este usuario.
         const response = await request(API_URL)
-          .patch(`/api/tasks/${testTask.id}/assign`)
-          .send({ assigned_to: availableUser.id });
+            .patch(`/api/tasks/${testTask.id}/assign`)
+            .send({ assigned_to: availableUser.id });
 
         // 3. Verificar que la operación fue exitosa.
         expect(response.statusCode).toBe(200);
         expect(response.body.assigned_to).toBe(availableUser.id);
-      });
+        });
 
-      it('should fail to assign a task to an unavailable user (ID 2)', async () => {
-        // 1. Crear un usuario que recibirá el ID 2 (el que el validador bloquea).
-        // Nota: Para que este test sea 100% robusto, la base de datos debería limpiarse antes de cada ejecución.
-        // Por ahora, asumimos que la ejecución secuencial le dará el ID 2.
-        await request(API_URL).put('/api/users').send({ username: 'user_with_id_1' }); // Ocupará el ID 1
-        await request(API_URL).put('/api/users').send({ username: 'busy_user_id_2' });   // Ocupará el ID 2
+        it('should fail to assign a task to an unavailable user (ID 2)', async () => {
+        // 1. Crear usuarios únicos para este test.
+        const timestamp = Date.now();
+        const randomStr = Math.random().toString(36).substring(2, 9);
+        
+        await request(API_URL).put('/api/users').send({ username: `user_1_${timestamp}_${randomStr}` });
+        await request(API_URL).put('/api/users').send({ username: `user_2_${timestamp}_${randomStr}` });
 
         // 2. Intentar asignar la tarea al usuario con ID 2.
         const response = await request(API_URL)
-          .patch(`/api/tasks/${testTask.id}/assign`)
-          .send({ assigned_to: 2 }); // El validador rechazará al usuario con ID 2
+            .patch(`/api/tasks/${testTask.id}/assign`)
+            .send({ assigned_to: 2 }); // El validador rechazará al usuario con ID 2
 
         // 3. Verificar que la operación fue rechazada correctamente.
         expect(response.statusCode).toBe(409); // 409 Conflict
         expect(response.body.error).toBe('Usuario no disponible');
-      });
+        });
     });
     ```
 
